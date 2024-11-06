@@ -24,17 +24,32 @@ export default function Index({ posts, globalData }) {
                 href={post.link}
                 className="block px-6 py-6 lg:py-10 lg:px-16 focus:outline-none focus:ring-4"
               >
+                {/* Display the publication date */}
                 {post.pubDate && (
                   <p className="mb-3 font-bold uppercase opacity-60">
                     {post.pubDate}
                   </p>
                 )}
+                
+                {/* Display the title */}
                 <h2 className="text-2xl md:text-3xl">{post.title}</h2>
+                
+                {/* Display the image below title and above description */}
+                {post.image && (
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-auto my-4 rounded"
+                  />
+                )}
+                
+                {/* Display the description */}
                 {post.description && (
                   <p className="mt-3 text-lg opacity-60">
                     {post.description}
                   </p>
                 )}
+                
                 <ArrowIcon className="mt-4" />
               </Link>
             </li>
@@ -53,6 +68,7 @@ export default function Index({ posts, globalData }) {
     </Layout>
   );
 }
+
 
 export async function getStaticProps() {
   const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
