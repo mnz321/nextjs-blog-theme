@@ -75,9 +75,9 @@ export async function getStaticProps() {
   });
 
   const globalData = {
-    name: 'Your Blog Name',
-    blogTitle: 'Latest Asia News',
-    footerText: '© 2024 Your Blog Name',
+    name: 'Assamese Khaar Khuwa News',
+    blogTitle: 'Latest News',
+    footerText: '© 2024 Assamese Khaar Khuwa News',
   };
 
   return { props: { posts: items, globalData } };
