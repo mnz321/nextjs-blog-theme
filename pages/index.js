@@ -75,5 +75,5 @@ export async function getStaticProps() {
     footerText: '© 2024 Assamese Khaar Khuwa News',
   };
 
-  return { props: { posts, globalData } };
+  return { props: { posts: items, globalData } };
 }
