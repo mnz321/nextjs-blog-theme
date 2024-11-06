@@ -61,11 +61,16 @@ export async function getStaticProps() {
   // Parse XML manually using regex to extract items
   const items = [...rssText.matchAll(/<item>(.*?)<\/item>/gs)].map((match) => {
     const item = match[1];
+    
+    // Helper function to clean CDATA tags
+    const cleanCDATA = (str) => str?.replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1').trim();
+
     return {
-      title: item.match(/<title>(.*?)<\/title>/)?.[1] || '',
+      title: cleanCDATA(item.match(/<title>(.*?)<\/title>/)?.[1] || ''),
       link: item.match(/<link>(.*?)<\/link>/)?.[1] || '',
       pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '',
-      description: item.match(/<description>(.*?)<\/description>/)?.[1] || '',
+      description: cleanCDATA(item.match(/<description>(.*?)<\/description>/)?.[1] || ''),
+      image: item.match(/<media:thumbnail[^>]*url="([^"]+)"[^>]*>/)?.[1] || '', // Extract thumbnail URL
     };
   });
 
@@ -77,4 +82,5 @@ export async function getStaticProps() {
 
   return { props: { posts: items, globalData } };
 }
+
 
