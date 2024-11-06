@@ -14,34 +14,44 @@ export default function Index({ posts, globalData }) {
         <h1 className="mb-12 text-3xl text-center lg:text-5xl">
           {globalData.blogTitle}
         </h1>
-        <ul className="w-full">
+
+        {/* Container for grid layout */}
+        <ul className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
           {posts.map((post, index) => (
             <li
               key={index}
-              className="transition bg-white border border-b-0 border-gray-800 md:first:rounded-t-lg md:last:rounded-b-lg backdrop-blur-lg dark:bg-black dark:bg-opacity-30 bg-opacity-10 hover:bg-opacity-20 dark:hover:bg-opacity-50 dark:border-white border-opacity-10 dark:border-opacity-10 last:border-b hover:border-b hovered-sibling:border-t-0"
+              className="transition bg-white border border-b-0 border-gray-800 rounded-lg backdrop-blur-lg dark:bg-black dark:bg-opacity-30 bg-opacity-10 hover:bg-opacity-20 dark:hover:bg-opacity-50 dark:border-white border-opacity-10 dark:border-opacity-10 p-6"
             >
               <Link
                 href={post.link}
-                className="block px-6 py-6 lg:py-10 lg:px-16 focus:outline-none focus:ring-4"
+                className="block focus:outline-none focus:ring-4"
               >
-                {post.image && (
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-auto mb-4 rounded"
-                  />
-                )}
+                {/* Display the publication date */}
                 {post.pubDate && (
                   <p className="mb-3 font-bold uppercase opacity-60">
                     {post.pubDate}
                   </p>
                 )}
+
+                {/* Display the title */}
                 <h2 className="text-2xl md:text-3xl">{post.title}</h2>
+
+                {/* Display the image below title and above description */}
+                {post.image && (
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-auto my-4 rounded"
+                  />
+                )}
+
+                {/* Display the description */}
                 {post.description && (
                   <p className="mt-3 text-lg opacity-60">
                     {post.description}
                   </p>
                 )}
+
                 <ArrowIcon className="mt-4" />
               </Link>
             </li>
@@ -60,7 +70,6 @@ export default function Index({ posts, globalData }) {
     </Layout>
   );
 }
-
 export async function getStaticProps() {
   const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
   const rssText = await res.text();
