@@ -70,7 +70,8 @@ export default function Index({ posts, globalData }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
+  //const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
+  const res= await fetch('https://news.google.com/rss/search?q=guwahati&hl=en-IN&gl=IN&ceid=IN:en');
   const rssText = await res.text();
 
   // Parse XML manually using regex to extract items
