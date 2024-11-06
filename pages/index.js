@@ -69,7 +69,6 @@ export default function Index({ posts, globalData }) {
   );
 }
 
-
 export async function getStaticProps() {
   const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
   const rssText = await res.text();
