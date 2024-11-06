@@ -58,18 +58,16 @@ export async function getStaticProps() {
   const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
   const rssText = await res.text();
 
-  // Parse XML to extract data
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(rssText, 'text/xml');
-  const items = xmlDoc.querySelectorAll('item');
-
-  // Extract the data you want from each RSS item
-  const posts = Array.from(items).map((item) => ({
-    title: item.querySelector('title')?.textContent,
-    link: item.querySelector('link')?.textContent,
-    pubDate: item.querySelector('pubDate')?.textContent,
-    description: item.querySelector('description')?.textContent,
-  }));
+  // Parse XML manually using regex to extract items
+  const items = [...rssText.matchAll(/<item>(.*?)<\/item>/gs)].map((match) => {
+    const item = match[1];
+    return {
+      title: item.match(/<title>(.*?)<\/title>/)?.[1] || '',
+      link: item.match(/<link>(.*?)<\/link>/)?.[1] || '',
+      pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '',
+      description: item.match(/<description>(.*?)<\/description>/)?.[1] || '',
+    };
+  });
 
   const globalData = {
     name: 'Assamese Khaar Khuwa News',
