@@ -24,6 +24,13 @@ export default function Index({ posts, globalData }) {
                 href={post.link}
                 className="block px-6 py-6 lg:py-10 lg:px-16 focus:outline-none focus:ring-4"
               >
+                {post.image && (
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-auto mb-4 rounded"
+                  />
+                )}
                 {post.pubDate && (
                   <p className="mb-3 font-bold uppercase opacity-60">
                     {post.pubDate}
@@ -61,11 +68,16 @@ export async function getStaticProps() {
   // Parse XML manually using regex to extract items
   const items = [...rssText.matchAll(/<item>(.*?)<\/item>/gs)].map((match) => {
     const item = match[1];
+    
+    // Helper function to clean CDATA tags
+    const cleanCDATA = (str) => str?.replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1').trim();
+
     return {
-      title: item.match(/<title>(.*?)<\/title>/)?.[1] || '',
+      title: cleanCDATA(item.match(/<title>(.*?)<\/title>/)?.[1] || ''),
       link: item.match(/<link>(.*?)<\/link>/)?.[1] || '',
       pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '',
-      description: item.match(/<description>(.*?)<\/description>/)?.[1] || '',
+      description: cleanCDATA(item.match(/<description>(.*?)<\/description>/)?.[1] || ''),
+      image: item.match(/<media:thumbnail[^>]*url="([^"]+)"[^>]*>/)?.[1] || '', // Extract thumbnail URL
     };
   });
 
