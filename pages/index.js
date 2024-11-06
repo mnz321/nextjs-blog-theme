@@ -15,12 +15,12 @@ export default function Index({ posts, globalData }) {
           {globalData.blogTitle}
         </h1>
 
-        {/* Container for grid layout */}
-        <ul className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+        {/* Full-width grid container with no left or right padding */}
+        <ul className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
           {posts.map((post, index) => (
             <li
               key={index}
-              className="transition bg-white border border-b-0 border-gray-800 rounded-lg backdrop-blur-lg dark:bg-black dark:bg-opacity-30 bg-opacity-10 hover:bg-opacity-20 dark:hover:bg-opacity-50 dark:border-white border-opacity-10 dark:border-opacity-10 p-6"
+              className="transition bg-white border border-gray-200 rounded-lg shadow-md dark:bg-black dark:bg-opacity-30 dark:border-gray-700 hover:shadow-lg p-6"
             >
               <Link
                 href={post.link}
