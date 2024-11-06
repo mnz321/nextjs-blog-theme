@@ -68,7 +68,54 @@ export default function Index({ posts, globalData }) {
     </Layout>
   );
 }
+async function parseRssFeed(rssUrl) {
+  try {
+    const response = await fetch(rssUrl);
+    const text = await response.text();
 
+    // Parse the RSS XML
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(text, "application/xml");
+
+    // Loop through each <item>
+    const items = xmlDoc.querySelectorAll("item");
+    for (let item of items) {
+      const title = item.querySelector("title").textContent;
+      const link = item.querySelector("link").textContent;
+      const description = item.querySelector("description").textContent;
+
+      // Fetch the Open Graph image from the article page
+      const imageUrl = await getImageFromPage(link);
+
+      // Display formatted item with image
+      console.log({
+        title,
+        link,
+        imageUrl,  // This is the Open Graph image URL
+        description: description.replace(/<!\[CDATA\[|\]\]>/g, "") // Remove CDATA
+      });
+    }
+  } catch (error) {
+    console.error("Error parsing the RSS feed:", error);
+  }
+}
+async function getImageFromPage(articleUrl) {
+  try {
+    const response = await fetch(articleUrl);
+    const text = await response.text();
+    
+    // Parse the HTML using DOMParser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+
+    // Find the og:image meta tag
+    const ogImage = doc.querySelector('meta[property="og:image"]');
+    return ogImage ? ogImage.getAttribute('content') : null;
+  } catch (error) {
+    console.error("Error fetching the article page:", error);
+    return null;
+  }
+}
 export async function getStaticProps() {
   //const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
   const res= await fetch('https://news.google.com/rss/search?q=guwahati&hl=en-IN&gl=IN&ceid=IN:en');
