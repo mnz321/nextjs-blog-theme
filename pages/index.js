@@ -70,7 +70,7 @@ export default function Index({ posts, globalData }) {
     </Layout>
   );
 }
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
   const rssText = await res.text();
 
@@ -87,7 +87,7 @@ export async function getStaticProps() {
       pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '',
       description: cleanCDATA(item.match(/<description>(.*?)<\/description>/)?.[1] || ''),
       image: item.match(/<media:thumbnail[^>]*url="([^"]+)"[^>]*>/)?.[1] || '', // Extract thumbnail URL
-    };
+    };    
   });
 
   const globalData = {
