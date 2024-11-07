@@ -70,31 +70,49 @@ export default function Index({ posts, globalData }) {
     </Layout>
   );
 }
+
 export async function getServerSideProps() {
-  const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
-  const rssText = await res.text();
+  try {
+    const res = await fetch('https://feeds.bbci.co.uk/news/world/asia/rss.xml');
+    if (!res.ok) throw new Error(`Failed to fetch data: ${res.status}`);
 
-  // Parse XML manually using regex to extract items
-  const items = [...rssText.matchAll(/<item>(.*?)<\/item>/gs)].map((match) => {
-    const item = match[1];
-    
-    // Helper function to clean CDATA tags
-    const cleanCDATA = (str) => str?.replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1').trim();
+    const rssText = await res.text();
 
+    // Parse XML manually using regex to extract items
+    const items = [...rssText.matchAll(/<item>(.*?)<\/item>/gs)].map((match) => {
+      const item = match[1];
+      
+      // Helper function to clean CDATA tags
+      const cleanCDATA = (str) => str?.replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1').trim();
+
+      return {
+        title: cleanCDATA(item.match(/<title>(.*?)<\/title>/)?.[1] || ''),
+        link: item.match(/<link>(.*?)<\/link>/)?.[1] || '',
+        pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '',
+        description: cleanCDATA(item.match(/<description>(.*?)<\/description>/)?.[1] || ''),
+        image: item.match(/<media:thumbnail[^>]*url="([^"]+)"[^>]*>/)?.[1] || '', // Extract thumbnail URL
+      };    
+    });
+
+    const globalData = {
+      name: 'Assamese Khaar Khuwa News',
+      blogTitle: 'Latest Assamese News',
+      footerText: '© 2024 Assamese Khaar Khuwa News',
+    };
+
+    return { props: { posts: items, globalData } };
+
+  } catch (error) {
+    console.error(error);
     return {
-      title: cleanCDATA(item.match(/<title>(.*?)<\/title>/)?.[1] || ''),
-      link: item.match(/<link>(.*?)<\/link>/)?.[1] || '',
-      pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '',
-      description: cleanCDATA(item.match(/<description>(.*?)<\/description>/)?.[1] || ''),
-      image: item.match(/<media:thumbnail[^>]*url="([^"]+)"[^>]*>/)?.[1] || '', // Extract thumbnail URL
-    };    
-  });
-
-  const globalData = {
-    name: 'Assamese Khaar Khuwa News',
-    blogTitle: 'Latest Assamese News',
-    footerText: '© 2024 Assamese Khaar Khuwa News',
-  };
-
-  return { props: { posts: items, globalData } };
+      props: {
+        posts: [],
+        globalData: {
+          name: 'Assamese Khaar Khuwa News',
+          blogTitle: 'Latest Assamese News',
+          footerText: '© 2024 Assamese Khaar Khuwa News'
+        }
+      }
+    };
+  }
 }
