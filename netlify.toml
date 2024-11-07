@@ -1,3 +1,12 @@
 [build]
   command = "npm run build"
   publish = ".next"
+
+[[plugins]]
+  package = "netlify-plugin-fetch-feeds"
+
+  [plugins.inputs]
+    dataDir = "src/data"  # Replace with the path where you want to save the feed data
+    feeds = [
+      { url = "https://feeds.bbci.co.uk/news/world/asia/rss.xml", name = "asia-news" }
+    ]
